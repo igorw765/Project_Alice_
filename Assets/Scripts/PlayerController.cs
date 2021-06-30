@@ -15,19 +15,28 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D playerBody;
     public LayerMask groundLayer;
     private SpriteRenderer _renderer;
+    private Animator _animator;
     
     float horizontalMovement;
 
     public bool enableShortJump = true;
     bool jumpPressed;
+    bool jumpDown;
+    bool leftMouseButtonPressed;
+
+    public static PlayerController Singleton;
    
     
+    private void Awake(){
+        Singleton = this;
+    }
+
     void Start(){
 		
 		jumpForce = 10f;
 		playerSpeed = 1000f;
         _renderer = GetComponentInParent<SpriteRenderer>();
-        
+        _animator = GetComponentInParent<Animator>();
     }
 
     void Update(){
@@ -42,6 +51,8 @@ public class PlayerController : MonoBehaviour
 		
         horizontalMovement = Input.GetAxisRaw("Horizontal");
         jumpPressed = Input.GetKeyDown(KeyCode.Space);
+        jumpDown = Input.GetKey(KeyCode.Space);
+        leftMouseButtonPressed = Input.GetMouseButton(0);
         Flip();
     }
     
@@ -55,11 +66,21 @@ public class PlayerController : MonoBehaviour
 			
             yMovement += jumpForce;
         }
-        
-        
+
+        if(jumpDown && playerBody.velocity.y > 0.1f){
+            _animator.SetBool("jumping", true);
+            _animator.SetBool("grounded", false);
+        }else{
+            _animator.SetBool("jumping", false);
+            _animator.SetBool("grounded", true);
+        }
+
+
+
         var playerPosition = horizontalMovement * playerSpeed * Time.deltaTime;
         playerBody.velocity = new Vector2(playerPosition, yMovement);
 	}
+
 
     void BetterFall()
     {
