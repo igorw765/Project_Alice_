@@ -23,16 +23,13 @@ public class PlayerController : MonoBehaviour
     bool jumpPressed;
     bool jumpDown;
     bool leftMouseButtonPressed;
+    public static bool isFlipped;
 
-    public static PlayerController Singleton;
    
-    
-    private void Awake(){
-        Singleton = this;
-    }
 
     void Start(){
 		
+        isFlipped = false;
 		jumpForce = 10f;
 		playerSpeed = 1000f;
         _renderer = GetComponentInParent<SpriteRenderer>();
@@ -100,13 +97,28 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetAxis("Horizontal") < 0){
             _renderer.flipX = true;
+            isFlipped = true;
         }
 
         if(Input.GetAxis("Horizontal") > 0){
             _renderer.flipX = false;
+            isFlipped = false;
         }
         
     }
+    // public bool IsFlipped(){
+
+    //     if(Input.GetAxis("Horizontal") < 0){
+    //         return true;
+    //     }else{
+    //          return false;
+    //     }
+
+    //     // if(Input.GetAxis("Horizontal") > 0){
+    //     //     return false;
+    //     // }
+        
+    // }
     
     private bool IsGrounded() => Physics2D.OverlapCircle(groundChecker.position, groundCheckRange, groundLayer) != null;
 
